@@ -17,11 +17,11 @@ app.get('/', function(req, res) {
 
 app.get('/webhook/', function(req, res) {
     if (req.query['hub.verify_token'] === 'token') {
-        res.send('hub.challenge');
+        res.send(req.query['hub.challenge']);
     }
     res.send('Wrong token')
 });
 
 app.listen(app.get('port'), function() {
-    console.log('Running at port: ', process.env.PORT);
+    console.log('Running: port');
 });
