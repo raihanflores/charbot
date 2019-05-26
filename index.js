@@ -32,13 +32,9 @@ app.post('/webhook/', function(req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
-            // sendText(sender, "Text echo " + text.substring(0,100))
-            if (+text > highestbid) {
-                highestbid = +text
-            }
+            sendText(sender, "Highest bid:" + text.split(' ')[0])
         }
     }
-    sendText(sender, "Highest bid:" + highestbid)
     res.sendStatus(200)
 })
 
