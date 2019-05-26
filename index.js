@@ -26,7 +26,6 @@ app.get('/webhook/', function(req, res) {
 
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
-    console.log(req.body.entry[0])
     let highestbid = 0
     for(let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i]
@@ -35,7 +34,7 @@ app.post('/webhook/', function(req, res) {
             let text = event.message.text
             sendText(sender, "highest bid: " + event.sender.name + ' ' + text.split(' ')[1])
         }
-        console.log(event.sender)
+        console.log(event)
     }
     res.sendStatus(200)
 })
