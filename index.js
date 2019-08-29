@@ -15,7 +15,7 @@ app.get('/', function (req, res) {
     res.send('Hi I am a chatbot');
 });
 
-const VERIFY_TOKEN = "kRFMvwYrpu59szFC5A0cOl7BL8s0pCp5qM74vQqq8skknecgGNiI9CyiaqAYeXLJ9QBYdY9HLcClV1NG";
+const VERIFY_TOKEN = "EAAXxpGmj2UwBAO27SZCsuZBs917jfH3hnceAufGFwxP6VnCsEF4UZBO7Ae3HkLE2xb9QOhetym1IaDHNFGDg3ZBBlZCeY1aQbcZCfA33sQiMUE0grkZBkvNHwi289tIZAOi5df69l1tpvDCYbSBOZCp9HnRCv4XzJituNZBEqEW2KZCGQZDZD";
 
 function getPriceList() {
     let fs = require('fs');
