@@ -69,7 +69,7 @@ function sendText(sender, text) {
     console.log("sender", sender);
     request({
         url: "https://graph.facebook.com/v4.0/me/messages",
-        qs: { access_token: VERIFY_TOKEN },
+        qs: { access_token: "EAAXxpGmj2UwBAMVcoSzDeZCNzPrQFuDOZA4UHzlZB5ZCXt3wF6ZBk34mQdfxvAjskLLRNLZB33XdF9xjTyNWRJVNorkJolcRVwbowcGbbOSSbKETfCl6uLeusr6p38SP92XX0fTHqNkRe1BKT7H9BZClznnKJmZAw3VbAB0AUFxHaxibhMiqGTKc" },
         method: 'POST',
         json: {
             messaging_type: "RESPONSE",
