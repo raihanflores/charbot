@@ -75,7 +75,7 @@ app.get('/webhook', (req, res) => {
     }
 });
 
-app.post('/webhook/', (req, res) => {
+app.post('/webhook', (req, res) => {
     console.log("webhook!!!");
     console.log(req.body);
     let messaging_events = req.body.entry[0].messaging
