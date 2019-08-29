@@ -29,21 +29,22 @@ function getPriceList() {
     let filename = "pricelist.txt";
     let content = fs.readFileSync(process.cwd() + "/" + filename).toString();
 
-    console.log(content);
+    return content;
 }
 
 app.post('/webhook/', function(req, res) {
     getPriceList();
     let messaging_events = req.body.entry[0].messaging
-    let highestbid = 0
     for(let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
-            let text = event.message.text
-            sendText(sender, "highest bid: " + event.sender.name + ' ' + text.split(' ')[1])
+            let message = event.message.text;
+
+            if(message === "pricelist" || message === "price list") {
+                sendText(sender, getPriceList())
+            }
         }
-        console.log(event)
     }
     res.sendStatus(200)
 })
