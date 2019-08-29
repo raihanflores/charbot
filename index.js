@@ -41,7 +41,7 @@ app.post('/webhook/', function(req, res) {
         if (event.message && event.message.text) {
             let message = event.message.text;
 
-            if(message === "pricelist" || message === "price list") {
+            if(message.includes("pricelist") || message.includes("pricelist")) {
                 sendText(sender, getPriceList())
             }
         }
