@@ -38,6 +38,8 @@ app.get('/webhook', (req, res) => {
 
         // Checks the mode and token sent is correct
         if (mode === "subscribe" && token === VERIFY_TOKEN) {
+            
+            let body = req.body;
 
             // Iterates over each entry - there may be multiple if batched
             body.entry.forEach(function (entry) {
