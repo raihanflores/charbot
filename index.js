@@ -15,7 +15,7 @@ app.get('/', function (req, res) {
     res.send('Hi I am a chatbot');
 });
 
-const VERIFY_TOKEN = "itsalreadylateandineedtogetthisdone"
+const VERIFY_TOKEN = "mqOPUuuqKTMVLgD9"
 
 function getPriceList() {
     let fs = require('fs');
