@@ -68,7 +68,7 @@ function sendText(sender, text) {
     let messageData = { text: text }
     console.log("sender", sender);
     request({
-        url: "https://graph.facebook.com/v4.0/2204734226301519/messages",
+        url: "https://graph.facebook.com/v4.0/me/messages",
         qs: { access_token: VERIFY_TOKEN },
         method: 'POST',
         json: {
