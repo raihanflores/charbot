@@ -49,14 +49,12 @@ app.get('/webhook/', (req, res) => {
 
 app.post('/webhook/', (req, res) => {
     let messaging_events = req.body.entry[0].messaging
-    console.log("messaging_events.length", messaging_events.length)
+
     for (let i = 0; i < messaging_events.length; i++) {
         let event = messaging_events[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let message = event.message.text;
-
-            console.log("message", message)
 
             if (message.includes("pricelist") || message.includes("pricelist")) {
                 sendText(sender, getPriceList())
