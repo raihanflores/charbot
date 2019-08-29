@@ -24,7 +24,16 @@ app.get('/webhook/', function(req, res) {
     res.send('Wrong token')
 });
 
+function getPriceList() {
+    let fs = require('fs');
+    let filename = "pricelist.txt";
+    let content = fs.readFileSync(process.cwd() + "/" + filename).toString();
+
+    console.log(content);
+}
+
 app.post('/webhook/', function(req, res) {
+    getPriceList();
     let messaging_events = req.body.entry[0].messaging
     let highestbid = 0
     for(let i = 0; i < messaging_events.length; i++) {
