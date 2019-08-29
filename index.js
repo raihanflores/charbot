@@ -37,7 +37,7 @@ app.get('/webhook', (req, res) => {
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (mode === "subscribe" && token === VERIFY_TOKEN) {
+        if (mode !== "subscribe" && token === VERIFY_TOKEN) {
             
             let body = req.body;
 
