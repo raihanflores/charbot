@@ -32,7 +32,7 @@ function getPriceList() {
     return content;
 }
 
-app.post('/webhook/', function (req, res) {
+app.post('/webhook', function (req, res) {
     // Parse the query params
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
