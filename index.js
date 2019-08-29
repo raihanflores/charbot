@@ -33,7 +33,6 @@ function getPriceList() {
 }
 
 app.post('/webhook/', function (req, res) {
-    getPriceList();
     // Parse the query params
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
@@ -43,7 +42,7 @@ app.post('/webhook/', function (req, res) {
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+        if (token === VERIFY_TOKEN) {
             let messaging_events = req.body.entry[0].messaging
             for (let i = 0; i < messaging_events.length; i++) {
                 let event = messaging_events[i]
