@@ -32,26 +32,32 @@ app.get('/webhook', (req, res) => {
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
-    console.log("mode", mode);
+
     // Checks if a token and mode is in the query string of the request
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (token === VERIFY_TOKEN) {
+        if (mode === "subscribe" && token === VERIFY_TOKEN) {
 
-            // Responds with the challenge token from the request
-            let messaging_events = req.body.entry[0].messaging
-            for (let i = 0; i < messaging_events.length; i++) {
-                let event = messaging_events[i]
-                let sender = event.sender.id
-                if (event.message && event.message.text) {
-                    let message = event.message.text;
+            // Iterates over each entry - there may be multiple if batched
+            body.entry.forEach(function (entry) {
 
-                    if (message.includes("pricelist") || message.includes("pricelist")) {
-                        sendText(sender, getPriceList())
+                // Gets the message. entry.messaging is an array, but 
+                // will only ever contain one message, so we get index 0
+                let messaging_events = entry.messaging[0];
+                for (let i = 0; i < messaging_events.length; i++) {
+                    let event = messaging_events[i]
+                    let sender = event.sender.id
+                    if (event.message && event.message.text) {
+                        let message = event.message.text;
+    
+                        if (message.includes("pricelist") || message.includes("pricelist")) {
+                            sendText(sender, getPriceList())
+                        }
                     }
                 }
-            }
+            });
+
             res.status(200).send(challenge);
 
         } else {
