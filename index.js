@@ -23,7 +23,7 @@ function getPriceList() {
     return content;
 }
 
-app.get('/webhook', (req, res) => {
+app.get('/webhook/', (req, res) => {
 
     // Token
     let VERIFY_TOKEN = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
@@ -75,7 +75,7 @@ app.get('/webhook', (req, res) => {
     }
 });
 
-app.post('/webhook', (req, res) => {
+app.post('/webhook/', (req, res) => {
     console.log("webhook!!!");
     console.log(req.body);
     let messaging_events = req.body.entry[0].messaging
