@@ -37,11 +37,13 @@ app.get('/webhook', (req, res) => {
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (mode !== "subscribe" && token === VERIFY_TOKEN) {
-            
-            let body = req.body;
+        if (token === VERIFY_TOKEN) {
 
-            console.log("body", body);
+            if (mode === "subscribe") {
+                res.status(200).send(challenge);
+            }
+
+            let body = req.body;
 
             // Iterates over each entry - there may be multiple if batched
             body.entry.forEach(function (entry) {
@@ -54,7 +56,7 @@ app.get('/webhook', (req, res) => {
                     let sender = event.sender.id
                     if (event.message && event.message.text) {
                         let message = event.message.text;
-    
+
                         if (message.includes("pricelist") || message.includes("pricelist")) {
                             sendText(sender, getPriceList())
                         }
