@@ -15,9 +15,6 @@ app.get('/', function (req, res) {
     res.send('Hi I am a chatbot');
 });
 
-let VERIFY_TOKEN = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
-
-
 function getPriceList() {
     let fs = require('fs');
     let filename = "pricelist.txt";
@@ -26,8 +23,10 @@ function getPriceList() {
     return content;
 }
 
-// Adds support for GET requests to our webhook
 app.get('/webhook', (req, res) => {
+
+    // Token
+    let VERIFY_TOKEN = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
 
     // Parse the query params
     let mode = req.query['hub.mode'];
@@ -38,37 +37,14 @@ app.get('/webhook', (req, res) => {
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-
-            // Responds with the challenge token from the request
-            console.log('WEBHOOK_VERIFIED');
-            res.status(200).send(challenge);
-
-        } else {
-            // Responds with '403 Forbidden' if verify tokens do not match
-            res.sendStatus(403);
-        }
-    }
-});
-
-app.post('/webhook', (req, res) => {
-
-    // Parse the query params
-    let mode = req.query['hub.mode'];
-    let token = req.query['hub.verify_token'];
-    let challenge = req.query['hub.challenge'];
-    console.log(req.query);
-    console.log("token", token);
-    console.log("challenge", challenge);
-
-    // Checks if a token and mode is in the query string of the request
-    if (token) {
-
-        // Checks the mode and token sent is correct
         if (token === VERIFY_TOKEN) {
 
+            if(mode === "subscribe" ) {
+                res.status(200).send(challenge);
+            }
+            
             let body = req.body;
-            console.log("body", body);
+
             // Iterates over each entry - there may be multiple if batched
             body.entry.forEach(function (entry) {
 
@@ -80,7 +56,7 @@ app.post('/webhook', (req, res) => {
                     let sender = event.sender.id
                     if (event.message && event.message.text) {
                         let message = event.message.text;
-
+    
                         if (message.includes("pricelist") || message.includes("pricelist")) {
                             sendText(sender, getPriceList())
                         }
