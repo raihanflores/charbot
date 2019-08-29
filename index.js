@@ -72,6 +72,7 @@ function sendText(sender, text) {
         qs: { access_token: VERIFY_TOKEN },
         method: 'POST',
         json: {
+            messaging_type: "RESPONSE",
             recipient: { id: sender },
             message: messageData
         }
