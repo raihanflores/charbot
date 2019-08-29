@@ -6,8 +6,6 @@ const request = require('request');
 
 const app = express();
 
-let VERIFY_TOKEN  = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
-
 app.set('port', (process.env.PORT || '5000'));
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -15,13 +13,6 @@ app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
     res.send('Hi I am a chatbot');
-});
-
-app.get('/webhook/', function (req, res) {
-    if (req.query['hub.verify_token'] === 'token') {
-        res.send(req.query['hub.challenge']);
-    }
-    res.send('Wrong token')
 });
 
 function getPriceList() {
@@ -32,7 +23,11 @@ function getPriceList() {
     return content;
 }
 
-app.post('/webhook', function (req, res) {
+app.get('/webhook', (req, res) => {
+
+    // Token
+    let VERIFY_TOKEN = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
+
     // Parse the query params
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
@@ -42,7 +37,9 @@ app.post('/webhook', function (req, res) {
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+        if (token === VERIFY_TOKEN) {
+
+            // Responds with the challenge token from the request
             let messaging_events = req.body.entry[0].messaging
             for (let i = 0; i < messaging_events.length; i++) {
                 let event = messaging_events[i]
@@ -55,7 +52,6 @@ app.post('/webhook', function (req, res) {
                     }
                 }
             }
-
             res.status(200).send(challenge);
 
         } else {
@@ -63,7 +59,7 @@ app.post('/webhook', function (req, res) {
             res.sendStatus(403);
         }
     }
-})
+});
 
 function sendText(sender, text) {
     let messageData = { text: text }
@@ -85,5 +81,5 @@ function sendText(sender, text) {
 }
 
 app.listen(app.get('port'), function () {
-    console.log('Running: port');
+    console.log('Webhook is live!');
 });
