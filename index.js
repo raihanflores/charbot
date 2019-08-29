@@ -15,6 +15,8 @@ app.get('/', function (req, res) {
     res.send('Hi I am a chatbot');
 });
 
+const VERIFY_TOKEN = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
+
 function getPriceList() {
     let fs = require('fs');
     let filename = "pricelist.txt";
@@ -24,9 +26,6 @@ function getPriceList() {
 }
 
 app.get('/webhook/', (req, res) => {
-
-    // Token
-    let VERIFY_TOKEN = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
 
     // Parse the query params
     let mode = req.query['hub.mode'];
@@ -97,7 +96,7 @@ function sendText(sender, text) {
     let messageData = { text: text }
     request({
         url: "https://graph.facebook.com/v3.3/me/messages",
-        qs: { access_token: token },
+        qs: { access_token: VERIFY_TOKEN },
         method: 'POST',
         json: {
             recipient: { id: sender },
