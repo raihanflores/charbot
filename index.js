@@ -41,6 +41,8 @@ app.get('/webhook', (req, res) => {
             
             let body = req.body;
 
+            console.log("body", body);
+
             // Iterates over each entry - there may be multiple if batched
             body.entry.forEach(function (entry) {
 
