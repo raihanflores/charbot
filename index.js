@@ -1,89 +1,124 @@
-'use strict'
+"use strict";
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const request = require('request');
+const express = require("express");
+const bodyParser = require("body-parser");
+const request = require("request");
 
 const app = express();
 
-let VERIFY_TOKEN  = "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD"
+let VERIFY_TOKEN =
+  "EAAevWHxDRssBAJuxiZBQ2SXlCkcM1gm4JIfiPJyxjHbG5jPwmps2DpglusJznfz05pYQP6IK4B5Nls295uMKQnbYMZBs5CN9YrpEbcTU9CIRirAy0oEtVdGIefZA9sod0lWqbZB9o7qAWpgGCn87Fr3YTmhUJrV0s9LmY08nOwZDZD";
 
-app.set('port', (process.env.PORT || '5000'));
+app.set("port", process.env.PORT || "5000");
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
-    res.send('Hi I am a chatbot');
+app.get("/", function(req, res) {
+  res.send("Hi I am a chatbot");
 });
 
-app.get('/webhook/', function (req, res) {
-    if (req.query['hub.verify_token'] === 'token') {
-        res.send(req.query['hub.challenge']);
-    }
-    res.send('Wrong token')
+app.get("/webhook/", function(req, res) {
+  if (req.query["hub.verify_token"] === "token") {
+    res.send(req.query["hub.challenge"]);
+  }
+  res.send("Wrong token");
 });
 
 function getPriceList() {
-    let fs = require('fs');
-    let filename = "pricelist.txt";
-    let content = fs.readFileSync(process.cwd() + "/" + filename).toString();
+  let fs = require("fs");
+  let filename = "pricelist.txt";
+  let content = fs.readFileSync(process.cwd() + "/" + filename).toString();
 
-    return content;
+  return content;
 }
 
-app.post('/webhook/', function (req, res) {
-    // Parse the query params
-    let mode = req.query['hub.mode'];
-    let token = req.query['hub.verify_token'];
-    let challenge = req.query['hub.challenge'];
-    console.log("req", req.query);
-    // Checks if a token and mode is in the query string of the request
-    if (mode && token) {
+app.post("/webhook/", function(req, res) {
+  // Parse the request body from the POST
+  let body = req.body;
 
-        // Checks the mode and token sent is correct
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-            let messaging_events = req.body.entry[0].messaging;
-            for (let i = 0; i < messaging_events.length; i++) {
-                let event = messaging_events[i]
-                let sender = event.sender.id
-                if (event.message && event.message.text) {
-                    let message = event.message.text;
+  // Check the webhook event is from a Page subscription
+  if (body.object === "page") {
+    // Iterate over each entry - there may be multiple if batched
+    body.entry.forEach(function(entry) {
+      // Get the webhook event. entry.messaging is an array, but
+      // will only ever contain one event, so we get index 0
+      let webhook_event = entry.messaging[0];
+      console.log(webhook_event);
 
-                    if (message.toLowerCase().includes("pricelist") || message.toLowerCase().includes("pricelist")) {
-                        sendText(sender, getPriceList());
-                    }
-                }
-            }
+      // Get the sender PSID
+      let sender_psid = webhook_event.sender.id;
+      console.log("Sender PSID: " + sender_psid);
 
-            res.status(200).send(challenge);
+      // Check if the event is a message or postback and
+      // pass the event to the appropriate handler function
+      if (webhook_event.message) {
+        handleMessage(sender_psid, webhook_event.message);
+      } else if (webhook_event.postback) {
+        handlePostback(sender_psid, webhook_event.postback);
+      }
+    });
 
-        } else {
-            // Responds with '403 Forbidden' if verify tokens do not match
-            res.sendStatus(403);
-        }
-    }
-})
+    // Return a '200 OK' response to all events
+    res.status(200).send("EVENT_RECEIVED");
+  } else {
+    // Return a '404 Not Found' if event is not from a page subscription
+    res.sendStatus(404);
+  }
+});
 
 function sendText(sender, text) {
-    let messageData = { text: text }
-    request({
-        url: "https://graph.facebook.com/v3.3/me/messages",
-        qs: { access_token: token },
-        method: 'POST',
-        json: {
-            recipient: { id: sender },
-            message: messageData
-        }
-    }, function (error, response, body) {
-        if (error) {
-            console.log(response.body.error)
-        } else if (response.body.error) {
-            console.log("response body error")
-        }
-    });
+  let messageData = { text: text };
+  request(
+    {
+      url: "https://graph.facebook.com/v2.6/me/messages",
+      qs: { access_token: token },
+      method: "POST",
+      json: {
+        recipient: { id: sender },
+        message: messageData
+      }
+    },
+    function(error, response, body) {
+      if (error) {
+        console.log(response.body.error);
+      } else if (response.body.error) {
+        console.log("response body error");
+      }
+    }
+  );
 }
 
-app.listen(app.get('port'), function () {
-    console.log('Running: port');
+// Handles messages events
+function handleMessage(sender_psid, received_message) {
+  let response;
+
+  // Check if the message contains text
+  if (received_message.text) {
+    // Create the payload for a basic text message
+    response = {
+      text: `You sent the message: "${received_message.text}". Now send me an image!`
+    };
+  }
+
+  // Sends the response message
+  callSendAPI(sender_psid, response);
+}
+
+// Handles messaging_postbacks events
+function handlePostback(sender_psid, received_postback) {}
+
+// Sends response messages via the Send API
+function callSendAPI(sender_psid, response) {
+  // Construct the message body
+  let request_body = {
+    recipient: {
+      id: sender_psid
+    },
+    message: response
+  };
+}
+
+app.listen(app.get("port"), function() {
+  console.log("Running: port");
 });
