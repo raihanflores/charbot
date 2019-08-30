@@ -43,15 +43,15 @@ app.post('/webhook/', function (req, res) {
 
         // Checks the mode and token sent is correct
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-            let messaging_events = req.body.entry[0].messaging
+            let messaging_events = req.body.entry[0].messaging;
             for (let i = 0; i < messaging_events.length; i++) {
                 let event = messaging_events[i]
                 let sender = event.sender.id
                 if (event.message && event.message.text) {
                     let message = event.message.text;
 
-                    if (message.includes("pricelist") || message.includes("pricelist")) {
-                        sendText(sender, getPriceList())
+                    if (message.toLowerCase().includes("pricelist") || message.toLowerCase().includes("pricelist")) {
+                        sendText(sender, getPriceList());
                     }
                 }
             }
