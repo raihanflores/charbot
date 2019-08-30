@@ -67,28 +67,6 @@ app.post("/webhook/", function(req, res) {
   }
 });
 
-function sendText(sender, text) {
-  let messageData = { text: text };
-  request(
-    {
-      url: "https://graph.facebook.com/v2.6/me/messages",
-      qs: { access_token: token },
-      method: "POST",
-      json: {
-        recipient: { id: sender },
-        message: messageData
-      }
-    },
-    function(error, response, body) {
-      if (error) {
-        console.log(response.body.error);
-      } else if (response.body.error) {
-        console.log("response body error");
-      }
-    }
-  );
-}
-
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
   let response;
@@ -106,7 +84,21 @@ function handleMessage(sender_psid, received_message) {
 }
 
 // Handles messaging_postbacks events
-function handlePostback(sender_psid, received_postback) {}
+function handlePostback(sender_psid, received_postback) {
+  let response;
+
+  // Get the payload for the postback
+  let payload = received_postback.payload;
+
+  // Set the response based on the postback payload
+  if (payload === "yes") {
+    response = { text: "Thanks!" };
+  } else if (payload === "no") {
+    response = { text: "Oops, try sending another image." };
+  }
+  // Send the message to acknowledge the postback
+  callSendAPI(sender_psid, response);
+}
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
@@ -117,6 +109,26 @@ function callSendAPI(sender_psid, response) {
     },
     message: response
   };
+
+  // Send the HTTP request to the Messenger Platform
+  request(
+    {
+      uri: "https://graph.facebook.com/v2.6/me/messages",
+      qs: {
+        access_token:
+          "EAAXxpGmj2UwBAPb8L6dfe0WsY0U7j9ynFZBUDO2b7ZB3dbQ3WoAjrjJu2EZAZBS7qvSOY83c51KyyaO5WASnAP1bZAdmj6YilHLqQAZBAU3hX1v47FAwE1LLqRq3ZCDxMexXhXtWQoTpOF4EBOUZBlDK4kZBYdKLlWMbD0LwyK9ceqqUSkT7jrg3Y"
+      },
+      method: "POST",
+      json: request_body
+    },
+    (err, res, body) => {
+      if (!err) {
+        console.log("message sent!");
+      } else {
+        console.error("Unable to send message:" + err);
+      }
+    }
+  );
 }
 
 app.listen(app.get("port"), function() {
