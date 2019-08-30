@@ -36,7 +36,7 @@ function getPriceList() {
 app.post("/webhook/", function(req, res) {
   // Parse the request body from the POST
   let body = req.body;
-
+  console.log(body.object);
   // Check the webhook event is from a Page subscription
   if (body.object === "page") {
     // Iterate over each entry - there may be multiple if batched
