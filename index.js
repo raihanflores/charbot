@@ -47,6 +47,10 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
+app.post('/pricelist/', (req, res) => {
+    return getPriceList();
+});
+
 app.post('/webhook/', (req, res) => {
     let messaging_events = req.body.entry[0].messaging
 
