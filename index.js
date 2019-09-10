@@ -47,7 +47,7 @@ app.get('/webhook/', (req, res) => {
     }
 });
 
-app.post('/pricelist/', (req, res) => {
+app.get('/pricelist/', (req, res) => {
     return getPriceList();
 });
 
